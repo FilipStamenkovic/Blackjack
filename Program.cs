@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Blackjack.ObjectModel;
+using Blackjack.ObjectModel.Interfaces;
 
 namespace Blackjack
 {
@@ -12,12 +13,11 @@ namespace Blackjack
         {
             Console.OutputEncoding = System.Text.Encoding.Unicode;
 
-            Random generator = new Random(/*todo: specify seed*/);
+            IDeck deck = new InfiniteDeck(); 
 
             for (int i = 0; i < 52; i++)
             {
-                byte numbericalRepresentation = (byte)generator.Next(1, 53);
-                Console.WriteLine(numbericalRepresentation + " = " + new Card(numbericalRepresentation));
+                Console.WriteLine(deck.GetNextCard());
             }
         }
     }

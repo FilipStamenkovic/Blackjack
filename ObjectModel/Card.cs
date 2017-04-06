@@ -5,10 +5,6 @@ using System.Threading.Tasks;
 
 namespace Blackjack.ObjectModel
 {
-    public class Deck
-    {
-    }
-
     public class Card
     {
         public readonly Suit CardSuit;

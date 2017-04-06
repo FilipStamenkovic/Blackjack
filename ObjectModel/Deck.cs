@@ -22,8 +22,19 @@ namespace Blackjack.ObjectModel
 
         public readonly bool IsAce;
 
+        private static Dictionary<int, string> cardLetter;
+
         public Card(byte numericalRepresentation)
         {
+            if (cardLetter == null)
+            {
+                cardLetter = new Dictionary<int, string>();
+                cardLetter.Add(11, "J");
+                cardLetter.Add(12, "Q");
+                cardLetter.Add(13, "K");
+                cardLetter.Add(1, "A");
+            }
+            
             if (numericalRepresentation < 1 || numericalRepresentation > 52)
             {
                 throw new Exception("Invalid numberical representation of a card! Supported range is [1, 52]");
@@ -59,7 +70,6 @@ namespace Blackjack.ObjectModel
         public override string ToString()
         {
             char suitSymbol;
-            string baseSymbol;
 
             switch (CardSuit)
             {
@@ -79,26 +89,7 @@ namespace Blackjack.ObjectModel
                     throw new Exception("Unsuported suit! Only values [0, 3] are supported!");
             }
 
-            switch (BaseValue)
-            {
-                case 1:
-                    baseSymbol = "A";
-                    break;
-                case 12:
-                    baseSymbol = "J";
-                    break;
-                case 13:
-                    baseSymbol = "Q";
-                    break;
-                case 14:
-                    baseSymbol = "K";
-                    break;
-                default:
-                    baseSymbol = BaseValue.ToString();
-                    break;
-            }
-
-            return suitSymbol + baseSymbol;
+            return suitSymbol + (cardLetter.ContainsKey(BaseValue) ? cardLetter[BaseValue] : BaseValue.ToString());
         }
     }
 

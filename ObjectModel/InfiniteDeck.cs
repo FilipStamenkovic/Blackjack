@@ -6,19 +6,28 @@ namespace Blackjack.ObjectModel
 {
     public class InfiniteDeck : IDeck
     {
+        private Random _generator;
+        
+        public InfiniteDeck()
+        {
+            Initialize();
+        }
+
         public Card GetNextCard()
         {
-            throw new NotImplementedException();
+            byte numbericalRepresentation = (byte)_generator.Next(1, 53);
+
+            return new Card(numbericalRepresentation);
         }
 
         public bool HasCards()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public void Initialize()
         {
-            throw new NotImplementedException();
+            _generator = new Random(/*todo: specify seed*/);
         }
     }
 }

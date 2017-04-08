@@ -9,7 +9,7 @@ namespace Blackjack
 {
     public class Program
     {
-       public static double[] q = new double[200];
+       public static double[] q = new double[400];
 
         public static void Main(string[] args)
         {

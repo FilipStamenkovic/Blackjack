@@ -12,6 +12,8 @@ namespace Blackjack.ObjectModel
         public int DealerCard { get; set; }
     }
 
+//action * 200 + HasUsableAce * 100 + ( DealerCard % 10) * 10 +  CurrentSum % 10
+
     public enum Action : byte
     {
         Stick = 0,

@@ -18,17 +18,17 @@ namespace Blackjack.ObjectModel
 
         public readonly bool IsAce;
 
-        private static Dictionary<int, string> cardLetter;
+        private static Dictionary<int, string> cardValue;    
 
         public Card(byte numericalRepresentation)
         {
-            if (cardLetter == null)
+            if (cardValue == null)
             {
-                cardLetter = new Dictionary<int, string>();
-                cardLetter.Add(11, "J");
-                cardLetter.Add(12, "Q");
-                cardLetter.Add(13, "K");
-                cardLetter.Add(1, "A");
+                cardValue = new Dictionary<int, string>();
+                cardValue.Add(11, "J");
+                cardValue.Add(12, "Q");
+                cardValue.Add(13, "K");
+                cardValue.Add(1, "A");
             }
             
             if (numericalRepresentation < 1 || numericalRepresentation > 52)
@@ -85,7 +85,7 @@ namespace Blackjack.ObjectModel
                     throw new Exception("Unsuported suit! Only values [0, 3] are supported!");
             }
 
-            return suitSymbol + (cardLetter.ContainsKey(BaseValue) ? cardLetter[BaseValue] : BaseValue.ToString());
+            return suitSymbol + (cardValue.ContainsKey(BaseValue) ? cardValue[BaseValue] : BaseValue.ToString());
         }
     }
 

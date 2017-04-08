@@ -27,7 +27,7 @@ namespace Blackjack.ObjectModel
 
         public void Initialize()
         {
-            _generator = new Random(/*todo: specify seed*/);
+            _generator = new Random();
         }
     }
 }

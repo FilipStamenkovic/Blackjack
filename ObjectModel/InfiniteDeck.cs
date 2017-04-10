@@ -10,7 +10,7 @@ namespace Blackjack.ObjectModel
         
         public InfiniteDeck()
         {
-            Initialize();
+            //Initialize();
         }
 
         public Card GetNextCard()

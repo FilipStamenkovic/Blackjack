@@ -34,7 +34,7 @@ namespace Blackjack.Game
             environment.FinishGame();
             IsOver = true;
 
-            int reward = 0;
+            double reward = 0;
             if(agent.Sum > 21)
             {
                 reward = -1;
@@ -56,6 +56,7 @@ namespace Blackjack.Game
                 reward = -1;
             }
 
+            Program.reward += reward;
             policy.EvaluateAndImprovePolicy(reward);
         }
 

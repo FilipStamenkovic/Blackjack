@@ -32,6 +32,17 @@ namespace Blackjack.ObjectModel
                     q[i] = double.Parse(lines[i + 400]);
                 }
 
+                string s = "";
+                string unvisited = "";
+                for (int i = 0; i < 200; i++)
+                {
+                    if (timesVisited[i] + timesVisited[i + 200] == 0)
+                        unvisited += string.Format("Unvisited State: {0}" + Environment.NewLine, i);
+                    s += string.Format("State: {0}, visited: {1}" + Environment.NewLine, i, timesVisited[i] + timesVisited[i + 200]);
+                }
+
+                File.WriteAllText("TimesVisited.txt", s + unvisited);
+
                 for (int i = 0; i < 200; i++)
                 {
                     _actions[i] = q[i] > q[i + 200] ? Action.Stick : Action.Hit;
@@ -56,7 +67,7 @@ namespace Blackjack.ObjectModel
             else
             {
                 a = (Action)Math.Round(random.NextDouble());
-                Console.WriteLine("Greedy exploration");
+                //Console.WriteLine("Greedy exploration");
             }
             timesVisited[(int)a * 200 + index]++;
 

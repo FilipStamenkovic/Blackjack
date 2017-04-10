@@ -20,10 +20,11 @@ namespace Blackjack
             Policy.Initialize();
             System.Console.WriteLine("Train or Play?");
             string read = System.Console.ReadLine();
-            if (read == "T")
+            if (read.ToLower() == "t")
             {
+                Mode = Mode.Train;
                 System.DateTime then = System.DateTime.Now;
-                for (int i = 0; i < 10000000; i++)
+                for (int i = 0; i < 600000000; i++)
                 {
                     Episode e = new Episode();
                     e.Play();
@@ -31,9 +32,10 @@ namespace Blackjack
                 
                 System.Console.WriteLine((System.DateTime.Now - then).TotalSeconds);
             }
-            else if (read == "P")
+            else if (read.ToLower() == "p")
             {
-                while (read == "P")
+                Mode = Mode.Play;
+                while (read.ToLower() == "p")
                 {
                     Episode e = new Episode();
                     e.Play();

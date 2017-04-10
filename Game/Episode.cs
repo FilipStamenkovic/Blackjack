@@ -23,14 +23,16 @@ namespace Blackjack.Game
             IDeck deck = new InfiniteDeck(); 
             policy = new Policy();
             environment = new Environment(deck);
-
+            //System.Console.WriteLine("Get dealer card:");
             Card dealerCard = environment.Deal(true);
             agent = new Agent(policy, dealerCard);
         }
 
         public void Play()
         {
+            //System.Console.WriteLine("Get agent cards:");
             while(agent.Play(environment.Deal(false)) != Action.Stick) {}
+            //System.Console.WriteLine("Get dealer cards:");
             environment.FinishGame();
             IsOver = true;
 

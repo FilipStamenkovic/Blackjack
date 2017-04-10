@@ -20,6 +20,7 @@ namespace Blackjack.Game
             this.numberOfPlayes = numberOfPlayes;
             this.dealersCards = new List<Card>();
         }
+        
         public Card Deal(bool toDealer)
         {
             Card nextCard = deck.GetNextCard();

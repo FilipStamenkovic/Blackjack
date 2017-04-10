@@ -50,14 +50,13 @@ namespace Blackjack.ObjectModel
         {
             int ace = hasUsableAce ? 1 : 0;
             int index = ace * 100 + (dealerCard % 10) * 10 + currentSum % 10;
-            Action a;
-            if (random.NextDouble() > epsilon)
-                a = _actions[index];
-            else
+            Action a = _actions[index];
+            
+            if (Program.Mode == Mode.Train && _history.Count == 0)
             {
-                a = (Action)Math.Round(random.NextDouble());
-                Console.WriteLine("Greedy exploration");
+                a = (Action) (((int) a + 1) % 2);
             }
+
             timesVisited[(int)a * 200 + index]++;
 
             _history.Add(new State(currentSum, hasUsableAce, dealerCard), a);

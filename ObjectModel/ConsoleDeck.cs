@@ -14,7 +14,29 @@ namespace Blackjack.ObjectModel
 
         public Card GetNextCard()
         {
-            byte numbericalRepresentation = (byte)_generator.Next(1, 53);
+            string cStr = Console.ReadLine();
+            byte numbericalRepresentation = 0;
+
+            if(cStr.ToLower() == "k")
+            {
+                numbericalRepresentation = (byte) 13;
+            }
+            else if(cStr.ToLower() == "q")
+            {
+                numbericalRepresentation = (byte) 12;
+            }
+            else if(cStr.ToLower() == "j")
+            {
+                numbericalRepresentation = (byte) 11;
+            }
+            else if(cStr.ToLower() == "a")
+            {
+                numbericalRepresentation = (byte) 1;
+            }
+            else
+            {
+                numbericalRepresentation = byte.Parse(cStr);
+            }
 
             return new Card(numbericalRepresentation);
         }

@@ -18,9 +18,12 @@ namespace Blackjack.Game
             this.numberOfPlayes = numberOfPlayes;
             this.dealersCards = new List<Card>();
         }
-        public Card Deal()
+        public Card Deal(bool toDealer)
         {
-            return deck.GetNextCard();
+            Card nextCard = deck.GetNextCard();
+            if (toDealer)
+                dealersCards.Add(nextCard);
+            return nextCard;
         }
 
         //finishes the game at the end by dealing cards to the dealer

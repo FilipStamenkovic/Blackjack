@@ -10,6 +10,7 @@ namespace Blackjack
     public class Program
     {
        public static double[] q = new double[400];
+        public const string fileName = "Blackjack.txt";
 
         public static void Main(string[] args)
         {

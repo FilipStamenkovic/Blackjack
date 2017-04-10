@@ -10,6 +10,13 @@ namespace Blackjack.ObjectModel
         public int CurrentSum { get; set; }
         public bool HasUsableAce { get; set; }
         public int DealerCard { get; set; }
+
+        public State(int sum, bool usableAce, int dealerCard)
+        {
+            CurrentSum = sum;
+            HasUsableAce = usableAce;
+            DealerCard = dealerCard;
+        }
     }
 
 //action * 200 + HasUsableAce * 100 + ( DealerCard % 10) * 10 +  CurrentSum % 10

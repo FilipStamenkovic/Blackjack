@@ -10,6 +10,9 @@ namespace Blackjack.Game
         private List<Card> agentCards;
         private Policy policy;
         private Card dealersCard;
+
+        public int Sum { get; private set; }
+
         public Agent(Policy policy, Card dealersCard)
         {
             agentCards = new List<Card>();
@@ -24,17 +27,27 @@ namespace Blackjack.Game
             agentCards.Add(receivedCard);
             sum = agentCards.Sum(c => c.BlackjackValue);
             int numOfAces = agentCards.Count(s => s.BlackjackValue == 1);
+            bool usableAce = false;
+            
             if (sum < 12 && numOfAces > 0)
             {
                 sum += 10;
-                numOfAces--;
+                usableAce = true;
             }
+            
+            Sum = sum;
+
             if (sum < 12)
                 return Action.Hit;
             else if (sum > 21)
                 return Action.Stick;
 
-            return policy.GetAction(sum, numOfAces > 0, dealersCard.BlackjackValue);
+            return policy.GetAction(sum, usableAce, dealersCard.BlackjackValue);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Agent Sum: {0}" + System.Environment.NewLine + "Agent Cards: [{1}]", Sum, string.Join(", ", agentCards.Select(c => c.ToString())));
         }
     }
 }

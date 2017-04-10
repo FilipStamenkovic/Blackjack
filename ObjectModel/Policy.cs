@@ -12,9 +12,12 @@ namespace Blackjack.ObjectModel
         private static double[] q = new double[400];
         private static int[] timesVisited = new int[400];
         private Dictionary<State, Action> _history = new Dictionary<State, Action>();
+        private const double epsilon = 0.1;
+        private Random random;
 
         public Policy()
         {
+            random = new Random();
         }
 
         public static void Initialize()
@@ -47,11 +50,18 @@ namespace Blackjack.ObjectModel
         {
             int ace = hasUsableAce ? 1 : 0;
             int index = ace * 100 + (dealerCard % 10) * 10 + currentSum % 10;
-            Action a = _actions[index];
+            Action a;
+            if (random.NextDouble() > epsilon)
+                a = _actions[index];
+            else
+            {
+                a = (Action)Math.Round(random.NextDouble());
+                Console.WriteLine("Greedy exploration");
+            }
             timesVisited[(int)a * 200 + index]++;
 
             _history.Add(new State(currentSum, hasUsableAce, dealerCard), a);
-            
+
             return a;
         }
 
@@ -65,12 +75,12 @@ namespace Blackjack.ObjectModel
         {
             foreach (var keyValue in _history)
             {
-                int a = (int) keyValue.Value;
+                int a = (int)keyValue.Value;
                 int ace = keyValue.Key.HasUsableAce ? 1 : 0;
-                int index = a * 200 + ace * 100 + (keyValue.Key.DealerCard % 10) * 10 +  keyValue.Key.CurrentSum % 10;
-                
+                int index = a * 200 + ace * 100 + (keyValue.Key.DealerCard % 10) * 10 + keyValue.Key.CurrentSum % 10;
+
                 //double oldVal = q[index];
-                q[index] = q[index] + 1.0/timesVisited[index] * (reward - q [index]);
+                q[index] = q[index] + 1.0 / timesVisited[index] * (reward - q[index]);
             }
         }
 
@@ -86,13 +96,13 @@ namespace Blackjack.ObjectModel
         {
             foreach (var keyValue in _history)
             {
-                int a = (int) keyValue.Value;
+                int a = (int)keyValue.Value;
                 int ace = keyValue.Key.HasUsableAce ? 1 : 0;
-                int actionIndex = ace * 100 + (keyValue.Key.DealerCard % 10) * 10 +  keyValue.Key.CurrentSum % 10;
+                int actionIndex = ace * 100 + (keyValue.Key.DealerCard % 10) * 10 + keyValue.Key.CurrentSum % 10;
                 int qIndex = a * 200 + actionIndex;
-                
+
                 //eval
-                q[qIndex] = q[qIndex] + 1.0/timesVisited[qIndex] * (reward - q [qIndex]);
+                q[qIndex] = q[qIndex] + 1.0 / timesVisited[qIndex] * (reward - q[qIndex]);
                 //improve
                 _actions[actionIndex] = q[actionIndex] > q[actionIndex + 200] ? Action.Stick : Action.Hit;
             }
@@ -102,7 +112,7 @@ namespace Blackjack.ObjectModel
         {
             string text = string.Join(Environment.NewLine, timesVisited);
 
-            text += string.Join(Environment.NewLine, q);
+            text += Environment.NewLine + string.Join(Environment.NewLine, q);
             File.WriteAllText(Program.FileName, text);
         }
     }

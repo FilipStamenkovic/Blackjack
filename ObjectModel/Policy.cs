@@ -10,17 +10,18 @@ namespace Blackjack.ObjectModel
     {
         private Action[] _actions = new Action[200];
         private double[] q = new double[400];
+        private int[] timesVisited = new int[400];
 
         public Policy()
         {
             if (File.Exists(Program.fileName))
             {
                 string[] lines = File.ReadAllLines(Program.fileName);
-                int episodeNum = int.Parse(lines[0]);
 
-                for (int i = 1; i < lines.Length; i++)
+                for (int i = 0; i < 400; i++)
                 {
-                    q[i - 1] = double.Parse(lines[i]);
+                    timesVisited[i] = int.Parse(lines[i]);
+                    q[i] = double.Parse(lines[i + 400]);
                 }
 
                 for (int i = 0; i < 200; i++)
@@ -53,8 +54,7 @@ namespace Blackjack.ObjectModel
         {
             throw new System.NotImplementedException();
 
-            int episodeNum = 0;
-            string text = episodeNum + Environment.NewLine;
+            string text = string.Join(Environment.NewLine, timesVisited);
 
             text += string.Join(Environment.NewLine, q);
             File.WriteAllText(Program.fileName, text);

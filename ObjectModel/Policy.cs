@@ -13,11 +13,10 @@ namespace Blackjack.ObjectModel
         private static int[] timesVisited = new int[400];
         private Dictionary<State, Action> _history = new Dictionary<State, Action>();
         private const double epsilon = 0.1;
-        private Random random;
+        private static Random random = new Random();
 
         public Policy()
         {
-            random = new Random();
         }
 
         public static void Initialize()
@@ -66,7 +65,8 @@ namespace Blackjack.ObjectModel
                 a = _actions[index];
             else
             {
-                a = (Action)Math.Round(random.NextDouble());
+                //a = (Action)Math.Round(random.NextDouble());
+                a = _actions[index];
                 //Console.WriteLine("Greedy exploration");
             }
             timesVisited[(int)a * 200 + index]++;

@@ -6,11 +6,11 @@ namespace Blackjack.ObjectModel
 {
     public class InfiniteDeck : IDeck
     {
-        private Random _generator;
+        private static Random _generator = new Random();
         
         public InfiniteDeck()
         {
-            Initialize();
+            //Initialize();
         }
 
         public Card GetNextCard()

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Blackjack.Game;
 using Blackjack.ObjectModel;
 using Blackjack.ObjectModel.Interfaces;
+using System.Threading;
 
 namespace Blackjack
 {
@@ -23,9 +24,9 @@ namespace Blackjack
             if (read == "T")
             {
                 System.DateTime then = System.DateTime.Now;
-                for (int i = 0; i < 500000000; i++)
+                for (int i = 0; i < 1000; i++)
                 {
-                    Episode e = new Episode();
+                    Episode e = new Episode();                    
                     e.Play();
                 }
 

@@ -31,7 +31,7 @@ namespace Blackjack.Game
         public void Play()
         {
             while(agent.Play(environment.Deal(false)) != Action.Stick) {}
-
+            environment.FinishGame();
             IsOver = true;
 
             int reward = 0;
@@ -56,7 +56,7 @@ namespace Blackjack.Game
                 reward = -1;
             }
 
-            policy.EvaluatePolicy(reward);
+            policy.EvaluateAndImprovePolicy(reward);
         }
 
 

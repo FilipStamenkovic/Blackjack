@@ -17,8 +17,8 @@ namespace Blackjack
 
             System.DateTime then = System.DateTime.Now;
             Policy.Initialize();
-            
-            for (int i = 0; i < 100000; i++)
+
+            for (int i = 0; i < 10000000; i++)
             {
                 Episode e = new Episode();
                 e.Play();

@@ -25,9 +25,9 @@ namespace Blackjack.ObjectModel
             if (cardValue == null)
             {
                 cardValue = new Dictionary<int, string>();
-                cardValue.Add(11, "J");
-                cardValue.Add(12, "Q");
-                cardValue.Add(13, "K");
+                cardValue.Add(12, "J");
+                cardValue.Add(13, "Q");
+                cardValue.Add(14, "K");
                 cardValue.Add(1, "A");
             }
             

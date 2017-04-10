@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Blackjack.ObjectModel
 {
-    public class Policy
+    public abstract class Policy
     {
-        private static Action[] _actions = new Action[200];
-        private static double[] q = new double[400];
-        private static int[] timesVisited = new int[400];
-        private Dictionary<State, Action> _history = new Dictionary<State, Action>();
-        private const double epsilon = 0.1;
-        private static Random random = new Random();
+        protected static Action[] _actions = new Action[200];
+        protected static double[] q = new double[400];
+        protected static int[] timesVisited = new int[400];
+        protected Dictionary<State, Action> _history = new Dictionary<State, Action>();
+        protected const double epsilon = 0.1;
+        protected static Random random = new Random();
 
         public Policy()
         {
@@ -56,15 +56,21 @@ namespace Blackjack.ObjectModel
             }
         }
 
-        public Action GetAction(int currentSum, bool hasUsableAce, int dealerCard)
+        public void ClearHistory()
+        {
+            _history.Clear();            
+        }
+
+        public virtual Action GetAction(int currentSum, bool hasUsableAce, int dealerCard)
         {
             int ace = hasUsableAce ? 1 : 0;
             int index = ace * 100 + (dealerCard % 10) * 10 + currentSum % 10;
             Action a = _actions[index];
-            
-            if (Program.Mode == Mode.Train && _history.Count == 0)
+
+            if (Program.Mode == Mode.Train && random.NextDouble() < epsilon)//_history.Count == 0)
             {
-                a = random.NextDouble() > 0.5 ? Action.Hit : Action.Stick;
+                a = (Action)Math.Round(random.NextDouble());                
+                //a = random.NextDouble() > 0.5 ? Action.Hit : Action.Stick;
             }
 
             timesVisited[(int)a * 200 + index]++;
@@ -74,48 +80,11 @@ namespace Blackjack.ObjectModel
             return a;
         }
 
-        // public Action GetAction(State s)
-        // {
-        //     int ace = s.HasUsableAce ? 1 : 0;
-        //     return _actions[ace * 100 + (s.DealerCard % 10) * 10 + s.CurrentSum % 10];
-        // }
+        ///returns true if best action for any state is changed
+        public abstract bool EvaluateAndImprovePolicy(double reward);
 
-        public void EvaluatePolicy(double reward)
-        {
-            foreach (var keyValue in _history)
-            {
-                int a = (int)keyValue.Value;
-                int ace = keyValue.Key.HasUsableAce ? 1 : 0;
-                int index = a * 200 + ace * 100 + (keyValue.Key.DealerCard % 10) * 10 + keyValue.Key.CurrentSum % 10;
-
-                //double oldVal = q[index];
-                q[index] = q[index] + 1.0 / timesVisited[index] * (reward - q[index]);
-            }
-        }
-
-        public void ImprovePolicy(double[] qStar)
-        {
-            for (int i = 0; i < 200; i++)
-            {
-                _actions[i] = q[i] > q[i + 200] ? Action.Hit : Action.Stick;
-            }
-        }
-
-        public void EvaluateAndImprovePolicy(double reward)
-        {
-            foreach (var keyValue in _history)
-            {
-                int a = (int)keyValue.Value;
-                int ace = keyValue.Key.HasUsableAce ? 1 : 0;
-                int actionIndex = ace * 100 + (keyValue.Key.DealerCard % 10) * 10 + keyValue.Key.CurrentSum % 10;
-                int qIndex = a * 200 + actionIndex;
-
-                //eval
-                q[qIndex] = q[qIndex] + 1.0 / timesVisited[qIndex] * (reward - q[qIndex]);
-                //improve
-                _actions[actionIndex] = q[actionIndex] > q[actionIndex + 200] ? Action.Stick : Action.Hit;
-            }
-        }
+        //evaluates policy after each taken action
+        public abstract void EvaluateAndImprovePolicy();
 
         public static void FlushToDisk()
         {

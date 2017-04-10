@@ -8,10 +8,11 @@ using System.Threading;
 
 namespace Blackjack
 {
-    public enum Mode {Train, Play};
+    public enum Mode { Train, Play };
     public class Program
     {
         public const string FileName = "Blackjack.txt";
+        public const int Threshold = 1000000;
         public static Mode Mode;
         public static double reward = 0;
 
@@ -21,18 +22,35 @@ namespace Blackjack
 
 
             Policy.Initialize();
-            System.Console.WriteLine("Train or Play?");
+            System.Console.WriteLine("Choose algorithm. Monte-Carlo or TD?");
+            Policy policy;
             string read = System.Console.ReadLine();
+            if (read.ToLower() == "m")
+                policy = new MonteCarlo();
+            else
+                return;
+
+            System.Console.WriteLine("Train or Play?");
+            read = System.Console.ReadLine();
             if (read.ToLower() == "t")
             {
                 Mode = Mode.Train;
                 System.DateTime then = System.DateTime.Now;
-                for (int i = 0; i < 10000000; i++)
+                int lastTimeActionUpdated = 0;
+                for (int i = 0; i < 100000000; i++)
                 {
-                    Episode e = new Episode();                    
-                    e.Play();
+                    Episode e = new Episode(policy);
+                    if (e.Play())
+                    {
+                        lastTimeActionUpdated = i;
+                    }
+                    else if (i - lastTimeActionUpdated > Threshold)
+                    {
+                        System.Console.WriteLine("No need for more episodes, policy is optimal. Number of episode when action was updated last time: "
+                            + lastTimeActionUpdated);
+                        break;
+                    }
                 }
-
                 System.Console.WriteLine((System.DateTime.Now - then).TotalSeconds);
             }
             else if (read.ToLower() == "p")
@@ -40,7 +58,7 @@ namespace Blackjack
                 Mode = Mode.Play;
                 while (read.ToLower() == "p")
                 {
-                    Episode e = new Episode();
+                    Episode e = new Episode(policy);
                     e.Play();
                     e.Print();
                     read = System.Console.ReadLine();

@@ -15,24 +15,29 @@ namespace Blackjack.Game
         public int Sum { get; private set; }
         public static int EpisodeNumber = 0;
 
-        public Episode()
+        public Episode(Policy policy)
         {
             IsOver = false;
             ++Episode.EpisodeNumber;
 
-            IDeck deck = new ConsoleDeck(); 
-            policy = new Policy();
+            IDeck deck = new InfiniteDeck(); 
+            this.policy = policy;
+            policy.ClearHistory();
             environment = new Environment(deck);
-            System.Console.WriteLine("Get dealer card:");
+           // System.Console.WriteLine("Get dealer card:");
             Card dealerCard = environment.Deal(true);
             agent = new Agent(policy, dealerCard);
         }
 
-        public void Play()
+        ///returns true if best action for any state is changed
+        public bool Play()
         {
-            System.Console.WriteLine("Get agent cards:");
-            while(agent.Play(environment.Deal(false)) != Action.Stick) {}
-            System.Console.WriteLine("Get dealer cards:");
+           // System.Console.WriteLine("Get agent cards:");
+            while(agent.Play(environment.Deal(false)) != Action.Stick) 
+            {
+                policy.EvaluateAndImprovePolicy();
+            }
+           // System.Console.WriteLine("Get dealer cards:");
             environment.FinishGame();
             IsOver = true;
 
@@ -59,9 +64,8 @@ namespace Blackjack.Game
             }
 
             Program.reward += reward;
-            policy.EvaluateAndImprovePolicy(reward);
+            return policy.EvaluateAndImprovePolicy(reward);
         }
-
 
         public void Print()
         {

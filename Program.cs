@@ -7,10 +7,11 @@ using Blackjack.ObjectModel.Interfaces;
 
 namespace Blackjack
 {
+    public enum Mode {Train, Play};
     public class Program
     {
         public const string FileName = "Blackjack.txt";
-
+        public static Mode Mode;
         public static void Main(string[] args)
         {
             System.Console.OutputEncoding = System.Text.Encoding.Unicode;

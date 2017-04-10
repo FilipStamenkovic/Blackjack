@@ -6,7 +6,7 @@ namespace Blackjack.ObjectModel
 {
     public class InfiniteDeck : IDeck
     {
-        private Random _generator;
+        private static Random _generator = new Random();
         
         public InfiniteDeck()
         {
@@ -27,7 +27,6 @@ namespace Blackjack.ObjectModel
 
         public void Initialize()
         {
-            _generator = new Random();
         }
     }
 }

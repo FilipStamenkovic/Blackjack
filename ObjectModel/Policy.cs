@@ -13,11 +13,10 @@ namespace Blackjack.ObjectModel
         private static int[] timesVisited = new int[400];
         private Dictionary<State, Action> _history = new Dictionary<State, Action>();
         private const double epsilon = 0.1;
-        private Random random;
+        private static Random random = new Random();
 
         public Policy()
         {
-            random = new Random();
         }
 
         public static void Initialize()
@@ -31,6 +30,17 @@ namespace Blackjack.ObjectModel
                     timesVisited[i] = int.Parse(lines[i]);
                     q[i] = double.Parse(lines[i + 400]);
                 }
+
+                string s = "";
+                string unvisited = "";
+                for (int i = 0; i < 200; i++)
+                {
+                    if (timesVisited[i] + timesVisited[i + 200] == 0)
+                        unvisited += string.Format("Unvisited State: {0}" + Environment.NewLine, i);
+                    s += string.Format("State: {0}, visited: {1}" + Environment.NewLine, i, timesVisited[i] + timesVisited[i + 200]);
+                }
+
+                File.WriteAllText("TimesVisited.txt", s + unvisited);
 
                 for (int i = 0; i < 200; i++)
                 {
@@ -54,7 +64,7 @@ namespace Blackjack.ObjectModel
             
             if (Program.Mode == Mode.Train && _history.Count == 0)
             {
-                a = (Action) (((int) a + 1) % 2);
+                a = random.NextDouble() > 0.5 ? Action.Hit : Action.Stick;
             }
 
             timesVisited[(int)a * 200 + index]++;

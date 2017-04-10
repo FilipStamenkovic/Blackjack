@@ -20,23 +20,23 @@ namespace Blackjack.Game
             IsOver = false;
             ++Episode.EpisodeNumber;
 
-            IDeck deck = new InfiniteDeck(); 
+            IDeck deck = new ConsoleDeck(); 
             policy = new Policy();
             environment = new Environment(deck);
-            //System.Console.WriteLine("Get dealer card:");
+            System.Console.WriteLine("Get dealer card:");
             Card dealerCard = environment.Deal(true);
             agent = new Agent(policy, dealerCard);
         }
 
         public void Play()
         {
-            //System.Console.WriteLine("Get agent cards:");
+            System.Console.WriteLine("Get agent cards:");
             while(agent.Play(environment.Deal(false)) != Action.Stick) {}
-            //System.Console.WriteLine("Get dealer cards:");
+            System.Console.WriteLine("Get dealer cards:");
             environment.FinishGame();
             IsOver = true;
 
-            int reward = 0;
+            double reward = 0;
             if(agent.Sum > 21)
             {
                 reward = -1;
@@ -58,6 +58,7 @@ namespace Blackjack.Game
                 reward = -1;
             }
 
+            Program.reward += reward;
             policy.EvaluateAndImprovePolicy(reward);
         }
 

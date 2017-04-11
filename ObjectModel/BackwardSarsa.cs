@@ -73,7 +73,7 @@ namespace Blackjack.ObjectModel
             if (eligibility[index] == 0)
                 return;
             q[index] = q[index] + alpha * correction * eligibility[index];
-            indexes.Add(index % 200);
+            
             eligibility[index] = discount * lambda * eligibility[index];
         }
 
@@ -84,7 +84,7 @@ namespace Blackjack.ObjectModel
             int index = ace * 100 + (dealerCard % 10) * 10 + currentSum % 10;
 
             eligibility[(int)currentAction * 200 + index] = 1.0;
-
+            indexes.Add(index);
             EvaluateAndImprovePolicy(0.0, false);
 
             return currentAction;

@@ -14,7 +14,7 @@ namespace Blackjack.ObjectModel
         protected static int[] timesVisited = new int[400];
         protected List<KeyValuePair<State, Action>> _history = new List<KeyValuePair<State, Action>>();
         protected const double epsilon = 0.1;
-        protected const double alpha = 0.01;
+        protected static double alpha = 0.01;
         protected const double discount = 0.7;
         protected static Random random = new Random();
 
@@ -61,7 +61,9 @@ namespace Blackjack.ObjectModel
 
         public virtual void ClearHistory()
         {
-            _history.Clear();            
+            _history.Clear();
+            if (Game.Episode.EpisodeNumber % 1000000 == 0)
+                alpha = alpha / 2;
         }
 
         public virtual Action GetAction(int currentSum, bool hasUsableAce, int dealerCard)

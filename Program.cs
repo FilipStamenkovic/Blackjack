@@ -12,7 +12,7 @@ namespace Blackjack
     public class Program
     {
         public static string FileName = "Blackjack.txt";
-        public const int Threshold = 1000000;
+        public const int Threshold = 10000000;
         public static Mode Mode;
         public static double reward = 0;
 
@@ -40,14 +40,8 @@ namespace Blackjack
             }
             else
                 return;
-
-            Policy.Initialize();
-
-            if (read.EndsWith("p"))
-            {
-                policy.Print();
-            }
-
+            bool shouldPrint = read.EndsWith("p");
+            Policy.Initialize();        
             
             System.Console.WriteLine("Train or Play?");
             read = System.Console.ReadLine();
@@ -57,7 +51,7 @@ namespace Blackjack
                 Mode = Mode.Train;
                 System.DateTime then = System.DateTime.Now;
                 int lastTimeActionUpdated = 0;
-                for (int i = 0; i < 1000000; i++)
+                for (int i = 0; i < 100000000; i++)
                 {
                     Episode e = new Episode(policy);
                     if (e.Play())
@@ -86,6 +80,10 @@ namespace Blackjack
                 }
             }
 
+            if (shouldPrint)
+            {
+                policy.Print();
+            }
             Policy.FlushToDisk();
             System.Console.WriteLine("Total reward: " + reward);
         }

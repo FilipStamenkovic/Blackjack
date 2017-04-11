@@ -11,8 +11,10 @@ namespace Blackjack.ObjectModel
         protected static Action[] _actions = new Action[200];
         protected static double[] q = new double[400];
         protected static int[] timesVisited = new int[400];
-        protected Dictionary<State, Action> _history = new Dictionary<State, Action>();
+        protected List<KeyValuePair<State, Action>> _history = new List<KeyValuePair<State, Action>>();
         protected const double epsilon = 0.1;
+        protected const double alpha = 0.01;
+        protected const double discount = 0.7;
         protected static Random random = new Random();
 
         public Policy()
@@ -56,7 +58,7 @@ namespace Blackjack.ObjectModel
             }
         }
 
-        public void ClearHistory()
+        public virtual void ClearHistory()
         {
             _history.Clear();            
         }
@@ -67,24 +69,20 @@ namespace Blackjack.ObjectModel
             int index = ace * 100 + (dealerCard % 10) * 10 + currentSum % 10;
             Action a = _actions[index];
 
-            if (Program.Mode == Mode.Train && random.NextDouble() < epsilon)//_history.Count == 0)
+            if (Program.Mode == Mode.Train && random.NextDouble() < epsilon)
             {
-                a = (Action)Math.Round(random.NextDouble());                
-                //a = random.NextDouble() > 0.5 ? Action.Hit : Action.Stick;
+                a = (Action)Math.Round(random.NextDouble());
             }
 
             timesVisited[(int)a * 200 + index]++;
 
-            _history.Add(new State(currentSum, hasUsableAce, dealerCard), a);
+            _history.Add(new KeyValuePair<State, Action>(new State(currentSum, hasUsableAce, dealerCard), a));
 
             return a;
         }
 
         ///returns true if best action for any state is changed
-        public abstract bool EvaluateAndImprovePolicy(double reward);
-
-        //evaluates policy after each taken action
-        public abstract void EvaluateAndImprovePolicy();
+        public abstract bool EvaluateAndImprovePolicy(double reward, bool isFinal = true);
 
         public static void FlushToDisk()
         {

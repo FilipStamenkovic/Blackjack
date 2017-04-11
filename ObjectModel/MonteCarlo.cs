@@ -10,7 +10,7 @@ namespace Blackjack.ObjectModel
     {
         public MonteCarlo(){}
 
-        public override bool EvaluateAndImprovePolicy(double reward)
+        public override bool EvaluateAndImprovePolicy(double reward, bool isFinal = true)
         {
             bool actionChanged = false;
             foreach (var keyValue in _history)
@@ -29,10 +29,6 @@ namespace Blackjack.ObjectModel
                 actionChanged = actionChanged || previousAction != _actions[actionIndex];
             }
             return actionChanged;
-        }
-
-        public override void EvaluateAndImprovePolicy()
-        {
         }
     }
 }

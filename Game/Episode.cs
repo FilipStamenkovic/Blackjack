@@ -35,7 +35,6 @@ namespace Blackjack.Game
            // System.Console.WriteLine("Get agent cards:");
             while(agent.Play(environment.Deal(false)) != Action.Stick) 
             {
-                policy.EvaluateAndImprovePolicy();
             }
            // System.Console.WriteLine("Get dealer cards:");
             environment.FinishGame();

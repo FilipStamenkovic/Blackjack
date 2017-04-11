@@ -11,7 +11,7 @@ namespace Blackjack
     public enum Mode { Train, Play };
     public class Program
     {
-        public const string FileName = "Blackjack.txt";
+        public static string FileName = "Blackjack.txt";
         public const int Threshold = 1000000;
         public static Mode Mode;
         public static double reward = 0;
@@ -19,17 +19,24 @@ namespace Blackjack
         public static void Main(string[] args)
         {
             System.Console.OutputEncoding = System.Text.Encoding.Unicode;
-
-
-            Policy.Initialize();
+            
             System.Console.WriteLine("Choose algorithm. Monte-Carlo or TD?");
             Policy policy;
             string read = System.Console.ReadLine();
             if (read.ToLower() == "m")
+            {
+                Program.FileName = "MC" + Program.FileName;
                 policy = new MonteCarlo();
+            }
+            else if (read.ToLower() == "t")
+            {
+                Program.FileName = "TD" + Program.FileName;
+                policy = new Sarsa();
+            }
             else
                 return;
 
+            Policy.Initialize();
             System.Console.WriteLine("Train or Play?");
             read = System.Console.ReadLine();
             if (read.ToLower() == "t")

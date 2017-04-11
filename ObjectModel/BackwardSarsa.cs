@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Blackjack.ObjectModel
 {
-    public class Sarsa : Policy
+    public class BackwardSarsa : Policy
     {
-        private bool _updated;
+        private double[] eligibility = new double[400];
+        private bool updated;
+        private double lambda = 0.8;
+        public BackwardSarsa() { }
 
         public override void ClearHistory()
         {
             base.ClearHistory();
-            _updated = false;
+            updated = false;
+            for (int i = 0; i < eligibility.Length; i++)
+                eligibility[i] = 0.0;
         }
 
         public override bool EvaluateAndImprovePolicy(double reward, bool isFinal = true)
@@ -22,6 +28,7 @@ namespace Blackjack.ObjectModel
             int currAce = currStateAction.Key.HasUsableAce ? 1 : 0;
             int currActionIndex = currAce * 100 + (currStateAction.Key.DealerCard % 10) * 10 + currStateAction.Key.CurrentSum % 10;
             int currQIndex = currAction * 200 + currActionIndex;
+            double correction;
             Action previousAction;
 
             if (numOfPrevSteps > 1 && !isFinal)
@@ -33,26 +40,41 @@ namespace Blackjack.ObjectModel
                 int prevQIndex = prevAction * 200 + prevActionIndex;
 
                 //eval
-                q[prevQIndex] = q[prevQIndex] + alpha * ((reward + discount * q[currQIndex]) - q[prevQIndex]);
-                //improve
-                previousAction = _actions[prevActionIndex];
-                _updated = _updated || (previousAction == (_actions[prevActionIndex] = q[prevActionIndex] > q[prevActionIndex + 200] ? Action.Stick : Action.Hit));
-            } 
+                correction = reward + discount * q[currQIndex] - q[prevQIndex];                
+            }
             else if (isFinal)
             {
                 //eval
-                q[currQIndex] = q[currQIndex] + alpha * (reward - q[currQIndex]);
-                //improve
-                previousAction = _actions[currActionIndex];
-                _updated = _updated || (previousAction == (_actions[currActionIndex] = q[currActionIndex] > q[currActionIndex + 200] ? Action.Stick : Action.Hit));
+                correction = reward + discount * q[currQIndex];
+            }
+            else
+                return false;
+
+            Parallel.For(0, 400, e => UpdateValues(e, correction));
+            for (int i = 0; i < _actions.Length; i++)
+            {
+                previousAction = _actions[i];
+                _actions[i] = q[i] > q[i + 200] ? Action.Stick : Action.Hit;
+
+                updated = updated || previousAction != _actions[i];
             }
 
-            return _updated;
+            return updated;
+        }
+
+        private void UpdateValues(int index, double correction)
+        {
+            q[index] += alpha * correction * eligibility[index];
+            eligibility[index] = discount * lambda * eligibility[index];
         }
 
         public override Action GetAction(int currentSum, bool hasUsableAce, int dealerCard)
         {
             Action currentAction = base.GetAction(currentSum, hasUsableAce, dealerCard);
+            int ace = hasUsableAce ? 1 : 0;
+            int index = ace * 100 + (dealerCard % 10) * 10 + currentSum % 10;
+
+            eligibility[(int)currentAction * 200 + index] += 1.0;
 
             EvaluateAndImprovePolicy(0.0, false);
 

@@ -19,7 +19,7 @@ namespace Blackjack
         public static void Main(string[] args)
         {
             System.Console.OutputEncoding = System.Text.Encoding.Unicode;
-            
+
             System.Console.WriteLine("Choose algorithm. Monte-Carlo or TD?");
             Policy policy;
             string read = System.Console.ReadLine();
@@ -32,6 +32,11 @@ namespace Blackjack
             {
                 Program.FileName = "TD" + Program.FileName;
                 policy = new Sarsa();
+            }
+            else if (read.ToLower() == "b")
+            {
+                Program.FileName = "BS" + Program.FileName;
+                policy = new BackwardSarsa();
             }
             else
                 return;

@@ -24,7 +24,7 @@ namespace Blackjack.Game
             this.policy = policy;
             policy.ClearHistory();
             environment = new Environment(deck);
-           // System.Console.WriteLine("Get dealer card:");
+            //System.Console.WriteLine("Get dealer card:");
             Card dealerCard = environment.Deal(true);
             agent = new Agent(policy, dealerCard);
         }
@@ -32,11 +32,11 @@ namespace Blackjack.Game
         ///returns true if best action for any state is changed
         public bool Play()
         {
-           // System.Console.WriteLine("Get agent cards:");
+            //System.Console.WriteLine("Get agent cards:");
             while(agent.Play(environment.Deal(false)) != Action.Stick) 
             {
             }
-           // System.Console.WriteLine("Get dealer cards:");
+            //System.Console.WriteLine("Get dealer cards:");
             environment.FinishGame();
             IsOver = true;
 

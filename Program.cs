@@ -22,13 +22,13 @@ namespace Blackjack
             
             System.Console.WriteLine("Choose algorithm. Monte-Carlo or TD?");
             Policy policy;
-            string read = System.Console.ReadLine();
-            if (read.ToLower() == "m")
+            string read = System.Console.ReadLine().ToLower();
+            if (read.StartsWith("m"))
             {
                 Program.FileName = "MC" + Program.FileName;
                 policy = new MonteCarlo();
             }
-            else if (read.ToLower() == "t")
+            else if (read.StartsWith("t"))
             {
                 Program.FileName = "TD" + Program.FileName;
                 policy = new Sarsa();
@@ -37,8 +37,16 @@ namespace Blackjack
                 return;
 
             Policy.Initialize();
+
+            if (read.EndsWith("p"))
+            {
+                policy.Print();
+            }
+
+            
             System.Console.WriteLine("Train or Play?");
             read = System.Console.ReadLine();
+
             if (read.ToLower() == "t")
             {
                 Mode = Mode.Train;
@@ -68,9 +76,11 @@ namespace Blackjack
                     Episode e = new Episode(policy);
                     e.Play();
                     e.Print();
+                    System.Console.WriteLine("Train or Play?");
                     read = System.Console.ReadLine();
                 }
             }
+
             Policy.FlushToDisk();
             System.Console.WriteLine("Total reward: " + reward);
         }

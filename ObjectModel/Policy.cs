@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Blackjack.ObjectModel
@@ -90,6 +91,46 @@ namespace Blackjack.ObjectModel
 
             text += Environment.NewLine + string.Join(Environment.NewLine, q);
             File.WriteAllText(Program.FileName, text);
+        }
+
+        public void Print(string fileName = "")
+        {
+            if(string.IsNullOrWhiteSpace(fileName))
+            {
+                fileName = this.GetType().ToString() + "Policy.txt";
+            }
+
+            StringBuilder sb = new StringBuilder();
+            
+            //with usable ace
+            for (int currentSum = 21; currentSum >= 12; currentSum--)
+            {
+                for (int dealerCard = 1; dealerCard <= 10; dealerCard++)
+                {
+                    int index = 100 + dealerCard % 10 * 10 + currentSum % 10;
+                    int action = (int)_actions[index];
+
+                    sb.Append(action + "\t");
+                }
+                sb.AppendLine();
+            }
+
+            sb.AppendLine();
+
+            //no usable ace
+            for (int currentSum = 21; currentSum >= 12; currentSum--)
+            {
+                for (int dealerCard = 1; dealerCard <= 10; dealerCard++)
+                {
+                    int index = dealerCard % 10 * 10 + currentSum % 10;
+                    int action = (int) _actions[index];
+
+                    sb.Append(action + "\t");
+                }
+                sb.AppendLine();
+            }
+
+            File.WriteAllText(fileName, sb.ToString());
         }
     }
 }

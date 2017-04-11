@@ -9,13 +9,15 @@ namespace Blackjack.ObjectModel
     {
         private double[] eligibility = new double[400];
         private bool updated;
-        private double lambda = 0.8;
+        private double lambda = 0.5;
+        private List<int> indexes;
         public BackwardSarsa() { }
 
         public override void ClearHistory()
         {
             base.ClearHistory();
             updated = false;
+            indexes = new List<int>();
             for (int i = 0; i < eligibility.Length; i++)
                 eligibility[i] = 0.0;
         }
@@ -29,7 +31,6 @@ namespace Blackjack.ObjectModel
             int currActionIndex = currAce * 100 + (currStateAction.Key.DealerCard % 10) * 10 + currStateAction.Key.CurrentSum % 10;
             int currQIndex = currAction * 200 + currActionIndex;
             double correction;
-            Action previousAction;
 
             if (numOfPrevSteps > 1 && !isFinal)
             {
@@ -45,16 +46,21 @@ namespace Blackjack.ObjectModel
             else if (isFinal)
             {
                 //eval
-                correction = reward + discount * q[currQIndex];
+                correction = reward - q[currQIndex];
             }
             else
                 return false;
 
-            Parallel.For(0, 400, e => UpdateValues(e, correction));
-            for (int i = 0; i < _actions.Length; i++)
+            //Parallel.For(0, 400, e => UpdateValues(e, correction));
+            for (int i = 0; i < q.Length; i++)
             {
-                previousAction = _actions[i];
-                _actions[i] = q[i] > q[i + 200] ? Action.Stick : Action.Hit;
+                UpdateValues(i, correction);
+            }
+
+            foreach(int i in indexes)
+            {
+                Action previousAction = _actions[i];
+                _actions[i] = q[i] > q[i + _actions.Length] ? Action.Stick : Action.Hit;
 
                 updated = updated || previousAction != _actions[i];
             }
@@ -64,7 +70,10 @@ namespace Blackjack.ObjectModel
 
         private void UpdateValues(int index, double correction)
         {
-            q[index] += alpha * correction * eligibility[index];
+            if (eligibility[index] == 0)
+                return;
+            q[index] = q[index] + alpha * correction * eligibility[index];
+            indexes.Add(index % 200);
             eligibility[index] = discount * lambda * eligibility[index];
         }
 
@@ -74,7 +83,7 @@ namespace Blackjack.ObjectModel
             int ace = hasUsableAce ? 1 : 0;
             int index = ace * 100 + (dealerCard % 10) * 10 + currentSum % 10;
 
-            eligibility[(int)currentAction * 200 + index] += 1.0;
+            eligibility[(int)currentAction * 200 + index] = 1.0;
 
             EvaluateAndImprovePolicy(0.0, false);
 

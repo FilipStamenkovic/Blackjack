@@ -33,7 +33,7 @@ namespace Blackjack
                 Program.FileName = "TD" + Program.FileName;
                 policy = new Sarsa();
             }
-            else if (read.ToLower() == "b")
+            else if (read.StartsWith("b"))
             {
                 Program.FileName = "BS" + Program.FileName;
                 policy = new BackwardSarsa();
@@ -57,7 +57,7 @@ namespace Blackjack
                 Mode = Mode.Train;
                 System.DateTime then = System.DateTime.Now;
                 int lastTimeActionUpdated = 0;
-                for (int i = 0; i < 100000000; i++)
+                for (int i = 0; i < 1000000; i++)
                 {
                     Episode e = new Episode(policy);
                     if (e.Play())

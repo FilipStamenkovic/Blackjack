@@ -36,7 +36,7 @@ namespace Blackjack.ObjectModel
                 q[prevQIndex] = q[prevQIndex] + alpha * ((reward + discount * q[currQIndex]) - q[prevQIndex]);
                 //improve
                 previousAction = _actions[prevActionIndex];
-                _updated = _updated || (previousAction == (_actions[prevActionIndex] = q[prevActionIndex] > q[prevActionIndex + 200] ? Action.Stick : Action.Hit));
+                _updated = _updated || (previousAction != (_actions[prevActionIndex] = q[prevActionIndex] > q[prevActionIndex + 200] ? Action.Stick : Action.Hit));
             } 
             else if (isFinal)
             {
@@ -44,7 +44,7 @@ namespace Blackjack.ObjectModel
                 q[currQIndex] = q[currQIndex] + alpha * (reward - q[currQIndex]);
                 //improve
                 previousAction = _actions[currActionIndex];
-                _updated = _updated || (previousAction == (_actions[currActionIndex] = q[currActionIndex] > q[currActionIndex + 200] ? Action.Stick : Action.Hit));
+                _updated = _updated || (previousAction != (_actions[currActionIndex] = q[currActionIndex] > q[currActionIndex + 200] ? Action.Stick : Action.Hit));
             }
 
             return _updated;

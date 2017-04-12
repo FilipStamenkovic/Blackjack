@@ -93,13 +93,34 @@ namespace Blackjack.ObjectModel
             File.WriteAllText(Program.FileName, text);
         }
 
+        private void PrintPlotValues(string fileName, bool hasUsableAce)
+        {
+            StringBuilder sb = new StringBuilder();
+            int offset = hasUsableAce ? 100 : 0;
+            //with usable ace
+            for (int currentSum = 21; currentSum >= 12; currentSum--)
+            {
+                for (int dealerCard = 1; dealerCard <= 10; dealerCard++)
+                {
+                    int index = offset + dealerCard % 10 * 10 + currentSum % 10;
+                    double difference = (q[index] - q[index + 200]) / 2.0 * 100;
+                    sb.Append(currentSum % 10 + ", " + dealerCard % 10 + ", " + Math.Max(q[index], q[index + 200]).ToString("0.000"));
+                    sb.AppendLine();
+                }                
+            }
+
+            File.WriteAllText(fileName, sb.ToString());
+        }
+
         public void Print(string fileName = "")
         {
             if (string.IsNullOrWhiteSpace(fileName))
             {
-                fileName = this.GetType().ToString() + "Policy.txt";
+                fileName = this.GetType().Name + "Policy.txt";
             }
 
+            PrintPlotValues("Plot" + this.GetType().Name + ".txt", false);
+            PrintPlotValues("Plot" + this.GetType().Name + ".txt", true);
             StringBuilder sb = new StringBuilder();
 
             //with usable ace

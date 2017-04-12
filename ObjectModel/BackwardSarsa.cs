@@ -23,7 +23,7 @@ namespace Blackjack.ObjectModel
         }
 
         public override bool EvaluateAndImprovePolicy(double reward, bool isFinal = true)
-        {            
+        {
             int numOfPrevSteps = _history.Count;
             KeyValuePair<State, Action> currStateAction = _history[numOfPrevSteps - 1];
             int currAction = (int)currStateAction.Value;
@@ -41,7 +41,7 @@ namespace Blackjack.ObjectModel
                 int prevQIndex = prevAction * 200 + prevActionIndex;
 
                 //eval
-                correction = reward + discount * q[currQIndex] - q[prevQIndex];   
+                correction = reward + discount * q[currQIndex] - q[prevQIndex];
             }
             else if (isFinal)
             {
@@ -51,17 +51,18 @@ namespace Blackjack.ObjectModel
             else
                 return false;
 
-            for (int i = 0; i < q.Length; i++)
+            foreach (int i in indexes)
             {
                 UpdateValues(i, correction);
             }
 
-            foreach(int i in indexes)
+            foreach (int i in indexes)
             {
-                Action previousAction = _actions[i];
-                _actions[i] = q[i] > q[i + _actions.Length] ? Action.Stick : Action.Hit;
+                int actionIndex = i % _actions.Length;
+                Action previousAction = _actions[actionIndex];
+                _actions[actionIndex] = q[i] > q[(i + _actions.Length) % 400] ? Action.Stick : Action.Hit;
 
-                updated = updated || previousAction != _actions[i];
+                updated = updated || previousAction != _actions[actionIndex];
             }
 
             return updated;
@@ -69,10 +70,7 @@ namespace Blackjack.ObjectModel
 
         private void UpdateValues(int index, double correction)
         {
-            if (eligibility[index] == 0)
-                return;
             q[index] = q[index] + alpha * correction * eligibility[index];
-            
             eligibility[index] = discount * lambda * eligibility[index];
         }
 
@@ -80,9 +78,9 @@ namespace Blackjack.ObjectModel
         {
             Action currentAction = base.GetAction(currentSum, hasUsableAce, dealerCard);
             int ace = hasUsableAce ? 1 : 0;
-            int index = ace * 100 + (dealerCard % 10) * 10 + currentSum % 10;
+            int index = (int)currentAction * 200 + ace * 100 + (dealerCard % 10) * 10 + currentSum % 10;
 
-            eligibility[(int)currentAction * 200 + index] = 1.0;
+            eligibility[index] = 1.0;
             indexes.Add(index);
             EvaluateAndImprovePolicy(0.0, false);
 

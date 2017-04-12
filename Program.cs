@@ -12,7 +12,7 @@ namespace Blackjack
     public class Program
     {
         public static string FileName = "Blackjack.txt";
-        public const int Threshold = 5000000;
+        public const int Threshold = 500000;
         public static Mode Mode;
         public static double reward = 0;
 

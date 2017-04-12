@@ -9,7 +9,7 @@ namespace Blackjack.ObjectModel
     {
         private double[] eligibility = new double[400];
         private bool updated;
-        private double lambda = 0.5;
+        private double lambda = 0.8;
         private List<int> indexes;
         public BackwardSarsa() { }
 
@@ -23,7 +23,7 @@ namespace Blackjack.ObjectModel
         }
 
         public override bool EvaluateAndImprovePolicy(double reward, bool isFinal = true)
-        {
+        {            
             int numOfPrevSteps = _history.Count;
             KeyValuePair<State, Action> currStateAction = _history[numOfPrevSteps - 1];
             int currAction = (int)currStateAction.Value;
@@ -41,7 +41,7 @@ namespace Blackjack.ObjectModel
                 int prevQIndex = prevAction * 200 + prevActionIndex;
 
                 //eval
-                correction = reward + discount * q[currQIndex] - q[prevQIndex];                
+                correction = reward + discount * q[currQIndex] - q[prevQIndex];   
             }
             else if (isFinal)
             {
@@ -51,7 +51,6 @@ namespace Blackjack.ObjectModel
             else
                 return false;
 
-            //Parallel.For(0, 400, e => UpdateValues(e, correction));
             for (int i = 0; i < q.Length; i++)
             {
                 UpdateValues(i, correction);

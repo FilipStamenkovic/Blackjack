@@ -62,8 +62,6 @@ namespace Blackjack.ObjectModel
         public virtual void ClearHistory()
         {
             _history.Clear();
-            if (Game.Episode.EpisodeNumber % 1000000 == 0)
-                alpha = alpha / 2;
         }
 
         public virtual Action GetAction(int currentSum, bool hasUsableAce, int dealerCard)

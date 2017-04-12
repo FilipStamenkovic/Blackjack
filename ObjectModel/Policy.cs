@@ -14,8 +14,8 @@ namespace Blackjack.ObjectModel
         protected static int[] timesVisited = new int[400];
         protected List<KeyValuePair<State, Action>> _history = new List<KeyValuePair<State, Action>>();
         protected const double epsilon = 0.1;
-        protected static double alpha = 0.01;
-        protected const double discount = 0.7;
+        protected static double alpha = 0.001;
+        protected const double discount = 0.9;
         protected static Random random = new Random();
 
         public Policy()
@@ -95,22 +95,21 @@ namespace Blackjack.ObjectModel
 
         public void Print(string fileName = "")
         {
-            if(string.IsNullOrWhiteSpace(fileName))
+            if (string.IsNullOrWhiteSpace(fileName))
             {
                 fileName = this.GetType().ToString() + "Policy.txt";
             }
 
             StringBuilder sb = new StringBuilder();
-            
+
             //with usable ace
             for (int currentSum = 21; currentSum >= 12; currentSum--)
             {
                 for (int dealerCard = 1; dealerCard <= 10; dealerCard++)
                 {
                     int index = 100 + dealerCard % 10 * 10 + currentSum % 10;
-                    int action = (int)_actions[index];
-
-                    sb.Append(action + "\t");
+                    double difference = (q[index] - q[index + 200]) / 2.0 * 100;
+                    sb.Append(difference.ToString("0.000") + "\t");
                 }
                 sb.AppendLine();
             }
@@ -123,9 +122,8 @@ namespace Blackjack.ObjectModel
                 for (int dealerCard = 1; dealerCard <= 10; dealerCard++)
                 {
                     int index = dealerCard % 10 * 10 + currentSum % 10;
-                    int action = (int) _actions[index];
-
-                    sb.Append(action + "\t");
+                    double difference = (q[index] - q[index + 200]) / 2.0 * 100;
+                    sb.Append(difference.ToString("0.000") + "\t");
                 }
                 sb.AppendLine();
             }
